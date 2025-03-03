@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Shape Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        img {
+            width: 100%;
+            max-width: 100px;
+            height: 100px;
+            padding: 10px;
+        }
+        
+        .box1, .box2, .box3, .box4, .box5,
+        .box6, .box7, .box8, .box9, .box10 {
+            position: absolute;
+            width: 100px;
+        }
+
+        @media (min-width: 1200px) {
+            .box1 { left: 500px; top: 100px; }
+            .box2 { left: 700px; top: 100px; }
+            .box3 { left: 600px; top: 150px; }
+            .box4 { left: 400px; top: 150px; }
+            .box5 { left: 800px; top: 150px; }
+            .box6 { left: 450px; top: 250px; }
+            .box7 { left: 750px; top: 250px; }
+            .box8 { left: 500px; top: 350px; }
+            .box9 { left: 700px; top: 350px; }
+            .box10 { left: 600px; top: 450px; }
+        }
+
+        @media (max-width: 1199px) {
+            .box1 { left: 40%; top: 5vh; }
+            .box2 { left: 60%; top: 5vh; }
+            .box3 { left: 50%; top: 15vh; }
+            .box4 { left: 30%; top: 15vh; }
+            .box5 { left: 70%; top: 15vh; }
+            .box6 { left: 35%; top: 25vh; }
+            .box7 { left: 65%; top: 25vh; }
+            .box8 { left: 40%; top: 35vh; }
+            .box9 { left: 60%; top: 35vh; }
+            .box10 { left: 50%; top: 45vh; }
+        }
+
+        @media (max-width: 768px) {
+            .box1 { left: 20%; top: 5vh; }
+            .box2 { left: 60%; top: 5vh; }
+            .box3 { left: 40%; top: 20vh; }
+            .box4 { left: 10%; top: 15vh; }
+            .box5 { left: 70%; top: 15vh; }
+            .box6 { left: 15%; top: 30vh; }
+            .box7 { left: 65%; top: 30vh; }
+            .box8 { left: 20%; top: 40vh; }
+            .box9 { left: 60%; top: 40vh; }
+            .box10 { left: 40%; top: 50vh; }
+        }
+
+        @media (max-width: 480px) {
+            img {
+                position: fixed;
+                max- width: 100px;
+                height: 100px;
+            }
+            .box1, .box2, .box3, .box4, .box5,
+            .box6, .box7, .box8, .box9, .box10 {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="box1"><img src="love.png"></div>
+    <div class="box2"><img src="love1.png"></div>
+    <div class="box3"><img src="love2.png"></div>
+    <div class="box4"><img src="love3.png"></div>
+    <div class="box5"><img src="love4.png"></div>
+    <div class="box6"><img src="love5.png"></div>
+    <div class="box7"><img src="love6.png"></div>
+    <div class="box8"><img src="love7.png"></div>
+    <div class="box9"><img src="love8.png"></div>
+    <div class="box10"><img src="love9.png"></div>
+
+    <canvas id="loveCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("loveCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Function to resize the canvas when the window is resized
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Resize canvas when the window size changes
+        window.addEventListener("resize", resizeCanvas);
+
+        // Initialize the canvas size
+        resizeCanvas();
+
+        const hearts = [];
+        const noungs = [];
+        const numText = 100; // Number of "NOUNG" texts
+        const numHearts = 50; // Number of floating hearts
+        const duration = 60000; // 1 minute in milliseconds
+
+        function createFloatingObject(type) {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: type === "heart" ? Math.random() * 10 + 5 : Math.random() * 15 + 5,
+                speed: Math.random() * 1.5 + 0.5,
+                opacity: Math.random(),
+                text: "NOUNG"
+            };
+        }
+
+        function drawHeart(obj) {
+            ctx.globalAlpha = obj.opacity;
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.moveTo(obj.x, obj.y);
+            ctx.bezierCurveTo(obj.x - obj.size, obj.y - obj.size, obj.x - obj.size * 1.5, obj.y + obj.size, obj.x, obj.y + obj.size * 1.5);
+            ctx.bezierCurveTo(obj.x + obj.size * 1.5, obj.y + obj.size, obj.x + obj.size, obj.y - obj.size, obj.x, obj.y);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        function drawNoung(obj) {
+            ctx.globalAlpha = obj.opacity;
+            ctx.font = obj.size + "px Arial";
+            ctx.fillStyle = "red";
+            ctx.textAlign = "center";
+            ctx.fillText(obj.text, obj.x, obj.y);
+            ctx.globalAlpha = 1;
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clears previous frame
+
+            // Update and draw hearts
+            for (let i = 0; i < hearts.length; i++) {
+                let heart = hearts[i];
+                heart.y -= heart.speed;
+                heart.opacity -= 0.005;
+
+                if (heart.opacity <= 0) {
+                    hearts[i] = createFloatingObject("heart");
+                    hearts[i].y = canvas.height;
+                }
+
+                drawHeart(heart);
+            }
+
+            // Update and draw "NOUNG" texts
+            for (let i = 0; i < noungs.length; i++) {
+                let noung = noungs[i];
+                noung.y -= noung.speed;
+                noung.opacity -= 0.005;
+
+                if (noung.opacity <= 0) {
+                    noungs[i] = createFloatingObject("noung");
+                    noungs[i].y = canvas.height;
+                }
+
+                drawNoung(noung);
+            }
+
+            // If the animation time has passed (1 minute), stop the animation
+            if (Date.now() - startTime > duration) {
+                cancelAnimationFrame(animationFrame);
+                return;
+            }
+
+            animationFrame = requestAnimationFrame(animate); // Keep the animation going
+        }
+
+        // Initialize hearts and "NOUNG" texts
+        for (let i = 0; i < numHearts; i++) {
+            hearts.push(createFloatingObject("heart"));
+        }
+
+        for (let i = 0; i < numText; i++) {
+            noungs.push(createFloatingObject("noung"));
+        }
+
+        // Start time to calculate the 1-minute duration
+        const startTime = Date.now();
+
+        // Begin the animation loop
+        let animationFrame = requestAnimationFrame(animate);
+
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const audio = document.getElementById("backgroundMusic");
+        const playMusic = () => {
+            audio.play();
+            document.removeEventListener("click", playMusic);
+        };
+        document.addEventListener("click", playMusic);
+    });
+</script>
+
+    <audio id="backgroundMusic" autoplay loop>
+        <source src="tharthar.mp3" type="audio/mpeg">
+    </audio>
+    
+   
+</body>
+</html>
